@@ -59,7 +59,10 @@
                      :total="total">
       </el-pagination>
     </div>
-    <el-dialog ref="addFormDialog" :title="addFormDialog.title" :visible.sync="addFormDialog.visible" style="padding:0px">
+    <el-dialog ref="addFormDialog"
+               :close-on-click-modal="false"
+               :title="addFormDialog.title"
+               :visible.sync="addFormDialog.visible" style="padding:0px">
       <!-- ref="addForm" 用于定位 更改将导致复位失败 -->
       <el-form ref="addForm" :label-width="addFormDialog.formLabelWidth" :model="addFormDialog.form">
         <el-tabs ref="addFormTabs" tab-position="top" v-model="addFormDialog.activeTabName">
@@ -241,7 +244,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="可接收货币" >
-              <el-select filterable size="small" v-model="addFormDialog.form.acceptableCurrency" multiple clearable placeholder="可接收货币（多选）"
+              <el-select size="small" v-model="addFormDialog.form.acceptableCurrency" multiple clearable placeholder="可接收货币（多选）"
                          :style="{width: addFormDialog.formInputWidth}">
                 <el-option
                   v-for="(item,index) in currencyTypeOptions"
@@ -552,8 +555,8 @@
             marketValue: '',
             countOfCirculation: '',
             countOfTotal: '',
-            restrictCountry: '',
-            acceptableCurrency: '',
+            restrictCountry: [],
+            acceptableCurrency: [],
             needKyc: '',
             needWhitelist: '',
             statusOfRecommended: '',
@@ -749,6 +752,8 @@
           // 重置联动时间中间数据
           self.addFormDialog.let.preSaleTime = []
           self.addFormDialog.let.icoTime = []
+          self.addFormDialog.form.restrictCountry = []
+          self.addFormDialog.form.acceptableCurrency = []
           // 重置成员数组tab表单数据
           self.addFormDialog.form.teamMemberList = [{
             'id': '',
@@ -788,7 +793,7 @@
           }
           console.log(row)
           // 项目表单媒体json参数解析赋值
-          let socialMediumJsonArray = JSON.parse(row.socialMediumJsonArray)
+          let socialMediumJsonArray = JSON.parse(this.handleCheckJsonString(row.socialMediumJsonArray) ? '[]' : row.acceptableCurrency)
           self.defaultSocialMediumList.forEach(defaultMedium => {
             defaultMedium.linkSrc = ''
             socialMediumJsonArray.forEach(hasMedium => {
@@ -797,8 +802,16 @@
               }
             })
           })
-          self.addFormDialog.form.restrictCountry = JSON.parse(row.restrictCountry)
-          self.addFormDialog.form.acceptableCurrency = JSON.parse(row.acceptableCurrency)
+          try {
+            self.addFormDialog.form.restrictCountry = JSON.parse(row.restrictCountry)
+          } catch (e) {
+            self.addFormDialog.form.restrictCountry = []
+          }
+          try {
+            self.addFormDialog.form.acceptableCurrency = JSON.parse(row.acceptableCurrency)
+          } catch (e) {
+            self.addFormDialog.form.acceptableCurrency = []
+          }
           self.addFormDialog.let.preSaleTime = []
           self.addFormDialog.let.icoTime = []
           self.addFormDialog.let.preSaleTime.push(row.preSaleStartTime)
@@ -821,6 +834,18 @@
       // ajax 表单媒体列表、项目成员列表后台拉取(项目上下文信息)
       handlePullContextInformation (projectId, callback) {
         this.$axiosPOST(this.$api.sysProjectExtraInfoList + '/' + projectId, {}, callback)
+      },
+      // jsonstring基础校验
+      handleCheckJsonString (jsonstr) {
+        let str = '_' + jsonstr + '_'
+        if (str !== null && str.trim() !== '') {
+          if ((str.split('[')).length === (str.split(']')).length){
+            if ((str.split('{')).length === (str.split('}')).length) {
+              return true
+            }
+          }
+        }
+        return false
       },
       // 项目添加
       handleAddProject () {
