@@ -141,6 +141,10 @@ export default {
     outline: none;
     cursor: pointer;
   }
+  .home-login-box .m-input  .el-input--prefix{
+    margin:0;
+    padding: 0px;
+  }
 
   .home-login-box .m-btn{
     font-size: 18px;

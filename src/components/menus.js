@@ -31,28 +31,7 @@ const menus = [
       {id: 'dt-country-management', label: '国家字典', path: '/dt-country-management', icon: 'fa fa-book'}
     ]
   },
-  ['待开发'],
-  {id: 'control-panel', label: '机构管理', path: '/', icon: 'fa fa-dashboard'},
-  {
-    id: 'system-setting',
-    label: '资讯',
-    path: '',
-    icon: 'fa fa-gear',
-    submenu: [
-      {id: 'dictionary-management', label: '文章管理', path: '/', icon: 'fa fa-book'},
-      {id: 'dt-country-management', label: '快讯管理', path: '/', icon: 'fa fa-book'}
-    ]
-  },
-  {
-    id: 'system-setting',
-    label: '资讯',
-    path: '',
-    icon: 'fa fa-gear',
-    submenu: [
-      {id: 'dictionary-management', label: '文章管理', path: '/', icon: 'fa fa-book'},
-      {id: 'dt-country-management', label: '快讯管理', path: '/', icon: 'fa fa-book'}
-    ]
-  }
+  ['待开发']
 /*
   {
     id: 'information',
